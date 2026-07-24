@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Protect PDF - ConvertHub</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+
+body{
+background:#f5f5f5;
+padding:40px;
+}
+
+.box{
+max-width:700px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 0 15px rgba(0,0,0,.1);
+text-align:center;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>🔒 Protect PDF</h1>
+
+<p>Select a PDF file and enter a password.</p>
+
+<form id="form">
+
+<input
+type="file"
+name="pdf"
+accept=".pdf"
+class="form-control mb-3"
+required>
+
+<input
+type="password"
+name="password"
+placeholder="Password"
+class="form-control mb-3"
+required>
+
+<button
+type="submit"
+class="btn btn-primary">
+
+Protect PDF
+
+</button>
+
+</form>
+
+<div id="result" class="mt-4"></div>
+
+<br>
+
+<a
+href="../../index.html"
+class="btn btn-secondary">
+
+⬅ Back Home
+
+</a>
+
+</div>
+
+<script>
+
+const form=document.getElementById("form");
+const result=document.getElementById("result");
+
+form.addEventListener("submit",async function(e){
+
+e.preventDefault();
+
+result.innerHTML="Protecting PDF...";
+
+const data=new FormData(form);
+
+try{
+
+const response=await fetch("/upload",{
+
+method:"POST",
+
+body:data
+
+});
+
+if(!response.ok){
+
+throw new Error();
+
+}
+
+const blob=await response.blob();
+
+const url=window.URL.createObjectURL(blob);
+
+const a=document.createElement("a");
+
+a.href=url;
+
+a.download="protected.pdf";
+
+document.body.appendChild(a);
+
+a.click();
+
+a.remove();
+
+window.URL.revokeObjectURL(url);
+
+result.innerHTML="<div class='alert alert-success'>✅ PDF Protected Successfully</div>";
+
+}catch{
+
+result.innerHTML="<div class='alert alert-danger'>❌ Failed</div>";
+
+}
+
+});
+
+</script>
+
+</body>
+</html>

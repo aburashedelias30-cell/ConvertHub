@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merge PDF - ConvertHub</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+
+<style>
+body{
+background:#f5f5f5;
+padding:40px;
+}
+
+.box{
+max-width:700px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 0 15px rgba(0,0,0,.1);
+text-align:center;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>📄 Merge PDF</h1>
+
+<p>Select two or more PDF files.</p>
+
+<input
+type="file"
+id="files"
+class="form-control"
+accept=".pdf"
+multiple>
+
+<br>
+
+<button
+id="merge"
+class="btn btn-primary">
+
+Merge PDFs
+
+</button>
+
+<br><br>
+
+<a
+id="download"
+class="btn btn-success d-none">
+
+Download Merged PDF
+
+</a>
+
+<br><br>
+
+<a href="../../index.html"
+class="btn btn-secondary">
+
+⬅ Back Home
+
+</a>
+
+</div>
+
+<script>
+
+const button=document.getElementById("merge");
+const download=document.getElementById("download");
+
+button.onclick=async()=>{
+
+const files=document.getElementById("files").files;
+
+if(files.length<2){
+
+alert("Please choose at least 2 PDF files.");
+
+return;
+
+}
+
+const mergedPdf = await PDFLib.PDFDocument.create();
+
+for (const file of files) {
+
+    const bytes = await file.arrayBuffer();
+
+    const pdf = await PDFLib.PDFDocument.load(bytes);
+
+    const copiedPages = await mergedPdf.copyPages(
+        pdf,
+        pdf.getPageIndices()
+    );
+
+    copiedPages.forEach(page => {
+        mergedPdf.addPage(page);
+    });
+
+}
+
+const mergedBytes = await mergedPdf.save();
+
+const blob = new Blob(
+    [mergedBytes],
+    { type: "application/pdf" }
+);
+
+download.href = URL.createObjectURL(blob);
+
+download.download = "merged.pdf";
+
+download.classList.remove("d-none");
+
+}
+
+</script>
+
+</body>
+</html>

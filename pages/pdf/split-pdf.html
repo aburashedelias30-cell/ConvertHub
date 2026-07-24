@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Split PDF - ConvertHub</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+
+<style>
+body{
+background:#f5f5f5;
+padding:40px;
+}
+.box{
+max-width:700px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 0 15px rgba(0,0,0,.1);
+text-align:center;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>📄 Split PDF</h1>
+
+<p>Select a PDF and choose a page number.</p>
+
+<input
+type="file"
+id="pdf"
+accept=".pdf"
+class="form-control">
+
+<input
+type="number"
+id="page"
+class="form-control mt-3"
+placeholder="Page Number">
+
+<button
+id="split"
+class="btn btn-primary mt-3">
+
+Extract Page
+
+</button>
+
+<br><br>
+
+<a
+id="download"
+class="btn btn-success d-none">
+
+Download PDF
+
+</a>
+
+<br><br>
+
+<a href="../../index.html"
+class="btn btn-secondary">
+
+⬅ Back Home
+
+</a>
+
+</div>
+
+<script>
+
+const button=document.getElementById("split");
+const download=document.getElementById("download");
+
+button.onclick=async()=>{
+
+const file=document.getElementById("pdf").files[0];
+
+if(!file){
+
+alert("Choose a PDF");
+
+return;
+
+}
+
+const pageNumber=
+Number(document.getElementById("page").value)-1;
+
+const bytes=await file.arrayBuffer();
+
+const pdf=await PDFLib.PDFDocument.load(bytes);
+
+if(pageNumber<0||pageNumber>=pdf.getPageCount()){
+
+alert("Invalid page");
+
+return;
+
+}
+
+const newPdf=await PDFLib.PDFDocument.create();
+
+const [page]=await newPdf.copyPages(pdf,[pageNumber]);
+
+newPdf.addPage(page);
+
+const newBytes=await newPdf.save();
+
+const blob=new Blob([newBytes],{
+type:"application/pdf"
+});
+
+download.href=URL.createObjectURL(blob);
+
+download.download="page.pdf";
+
+download.classList.remove("d-none");
+
+}
+
+</script>
+
+</body>
+</html>

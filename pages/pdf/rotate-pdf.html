@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rotate PDF - ConvertHub</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+
+<style>
+body{
+background:#f5f5f5;
+padding:40px;
+}
+.box{
+max-width:700px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 0 15px rgba(0,0,0,.1);
+text-align:center;
+}
+</style>
+
+</head>
+<body>
+
+<div class="box">
+
+<h1>🔄 Rotate PDF</h1>
+
+<p>Select a PDF and rotate all pages.</p>
+
+<input
+type="file"
+id="pdf"
+accept=".pdf"
+class="form-control">
+
+<select
+id="angle"
+class="form-select mt-3">
+
+<option value="90">90°</option>
+<option value="180">180°</option>
+<option value="270">270°</option>
+
+</select>
+
+<button
+id="rotate"
+class="btn btn-primary mt-3">
+
+Rotate PDF
+
+</button>
+
+<br><br>
+
+<a
+id="download"
+class="btn btn-success d-none">
+
+Download PDF
+
+</a>
+
+<br><br>
+
+<a href="../../index.html"
+class="btn btn-secondary">
+
+⬅ Back Home
+
+</a>
+
+</div>
+
+<script>
+
+const button=document.getElementById("rotate");
+const download=document.getElementById("download");
+
+button.onclick=async()=>{
+
+const file=document.getElementById("pdf").files[0];
+
+if(!file){
+
+alert("Choose a PDF");
+
+return;
+
+}
+
+const angle=Number(document.getElementById("angle").value);
+
+const bytes=await file.arrayBuffer();
+
+const pdf=await PDFLib.PDFDocument.load(bytes);
+
+pdf.getPages().forEach(page=>{
+
+page.setRotation(PDFLib.degrees(angle));
+
+});
+
+const newBytes=await pdf.save();
+
+const blob=new Blob([newBytes],{
+
+type:"application/pdf"
+
+});
+
+download.href=URL.createObjectURL(blob);
+
+download.download="rotated.pdf";
+
+download.classList.remove("d-none");
+
+}
+
+</script>
+
+</body>
+</html>
