@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ConvertHub</title>
+<title>ConvertHub - Free Online File & AI Tools</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
@@ -12,21 +12,25 @@
 
 <body>
 
-<nav class="navbar navbar-expand-lg bg-white shadow-sm">
+<nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
 <div class="container">
 
-<a class="navbar-brand fw-bold fs-2 text-primary" href="#">
+<a class="navbar-brand fw-bold fs-2 text-primary" href="index.html">
 <i class="fa-solid fa-bolt"></i> ConvertHub
 </a>
 
-<div class="ms-auto d-flex gap-2">
+<div class="ms-auto d-flex align-items-center gap-2">
 
-<button id="darkBtn" class="btn btn-dark">
+<button id="darkBtn" class="btn btn-outline-secondary rounded-circle px-3 py-2" title="Toggle Theme">
 🌙
 </button>
 
-<a href="#" class="btn btn-primary">
-Login
+<a href="/download-zip" download="ConvertHub-v2.5.zip" class="btn btn-outline-primary rounded-pill px-3 fw-semibold">
+<i class="fa-solid fa-file-zipper me-1"></i> Download ZIP
+</a>
+
+<a href="#popular-tools" class="btn btn-primary rounded-pill px-4 fw-semibold">
+Explore Tools
 </a>
 
 </div>
@@ -35,305 +39,396 @@ Login
 </nav>
 
 <section class="hero">
+<div class="container">
+<div class="mb-3 d-flex flex-wrap justify-content-center gap-2">
+<a href="#reviews-section" class="badge bg-white text-warning border shadow-sm fs-6 px-3 py-2 rounded-pill text-decoration-none"><i class="fa-solid fa-star text-warning me-1"></i> ⭐⭐⭐⭐⭐ Trusted by 150+ users (4.9/5)</a>
+<span class="badge bg-white text-primary border shadow-sm fs-6 px-3 py-2 rounded-pill"><i class="fa-solid fa-bolt me-1"></i> 41+ Free Tools</span>
+<span class="badge bg-white text-success border shadow-sm fs-6 px-3 py-2 rounded-pill"><i class="fa-solid fa-shield-halved me-1"></i> 100% Private</span>
+<span class="badge bg-white text-info border shadow-sm fs-6 px-3 py-2 rounded-pill"><i class="fa-solid fa-sparkles me-1"></i> AI Powered</span>
+</div>
+<h1 class="fw-black">Free Online Tools & Converters</h1>
+<p class="lead opacity-90">PDF • Images • Video • Audio • AI Utilities</p>
 
-<h1>Free Online Tools</h1>
-
-<p>PDF • Images • Video • Audio • AI</p>
-
+<div class="position-relative max-w-600 mx-auto" style="max-width: 650px;">
 <input
 type="text"
-class="form-control search"
-placeholder="Search any tool...">
-
+class="form-control search-input"
+placeholder="Search any tool (e.g. PDF to Word, Merge PDF, AI Writer)...">
+</div>
+</div>
 </section>
 
-<section class="container py-5">
+<section id="popular-tools" class="container py-5">
 
-<h2 class="text-center mb-5">Popular Tools</h2>
-
+<!-- Category 1: PDF Tools -->
+<div class="mb-5">
+<div class="d-flex align-items-center gap-2 mb-4">
+<i class="fa-solid fa-file-pdf text-danger fs-3"></i>
+<h3 class="fw-bold mb-0">PDF Tools</h3>
+</div>
 <div class="row g-4">
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/pdf/pdf-to-word.html" class="tool text-decoration-none">
-<i class="fa-solid fa-file-pdf"></i>
-<h5>PDF to Word</h5>
-</a>
-</div>
-
-<div class="col-lg-3 col-md-4 col-6">
-<a href="pages/pdf/word-to-pdf.html" class="tool text-decoration-none">
-<i class="fa-solid fa-file-word"></i>
-<h5>Word to PDF</h5>
-</a>
-</div>
-
-<div class="col-lg-3 col-md-4 col-6">
-<a href="pages/pdf/merge-pdf.html" class="tool text-decoration-none">
-<i class="fa-solid fa-object-group"></i>
+<a href="pages/pdf/merge-pdf.html" class="tool-grid-card">
+<i class="fa-solid fa-object-group text-danger"></i>
 <h5>Merge PDF</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/pdf/split-pdf.html" class="tool text-decoration-none">
-<i class="fa-solid fa-scissors"></i>
+<a href="pages/pdf/split-pdf.html" class="tool-grid-card">
+<i class="fa-solid fa-scissors text-danger"></i>
 <h5>Split PDF</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/pdf/compress-pdf.html" class="tool text-decoration-none">
-<i class="fa-solid fa-file-zipper"></i>
+<a href="pages/pdf/compress-pdf.html" class="tool-grid-card">
+<i class="fa-solid fa-file-zipper text-danger"></i>
 <h5>Compress PDF</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/pdf/rotate-pdf.html" class="tool text-decoration-none">
-<i class="fa-solid fa-rotate"></i>
-<h5>Rotate PDF</h5>
+<a href="pages/pdf/pdf-to-word.html" class="tool-grid-card">
+<i class="fa-solid fa-file-word text-danger"></i>
+<h5>PDF to Word</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/pdf/unlock-pdf.html" class="tool text-decoration-none">
-<i class="fa-solid fa-lock-open"></i>
-<h5>Unlock PDF</h5>
+<a href="pages/pdf/word-to-pdf.html" class="tool-grid-card">
+<i class="fa-solid fa-file-pdf text-danger"></i>
+<h5>Word to PDF</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/pdf/protect-pdf.html" class="tool text-decoration-none">
-<i class="fa-solid fa-lock"></i>
-<h5>Protect PDF</h5>
-</a>
-</div>
-<div class="col-lg-3 col-md-4 col-6">
-<a href="pages/pdf/pdf-to-jpg.html" class="tool text-decoration-none">
-<i class="fa-solid fa-file-export"></i>
-<h5>PDF to JPG</h5>
-</a>
-</div>
-
-<div class="col-lg-3 col-md-4 col-6">
-<a href="pages/pdf/jpg-to-pdf.html" class="tool text-decoration-none">
-<i class="fa-solid fa-file-import"></i>
+<a href="pages/pdf/jpg-to-pdf.html" class="tool-grid-card">
+<i class="fa-solid fa-file-import text-danger"></i>
 <h5>JPG to PDF</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/image/jpg-to-png.html" class="tool text-decoration-none">
-<i class="fa-solid fa-image"></i>
+<a href="pages/pdf/pdf-to-jpg.html" class="tool-grid-card">
+<i class="fa-solid fa-file-export text-danger"></i>
+<h5>PDF to JPG</h5>
+</a>
+</div>
+
+<div class="col-lg-3 col-md-4 col-6">
+<a href="pages/pdf/rotate-pdf.html" class="tool-grid-card">
+<i class="fa-solid fa-rotate text-danger"></i>
+<h5>Rotate PDF</h5>
+</a>
+</div>
+
+<div class="col-lg-3 col-md-4 col-6">
+<a href="pages/pdf/protect-pdf.html" class="tool-grid-card">
+<i class="fa-solid fa-lock text-danger"></i>
+<h5>Protect PDF</h5>
+</a>
+</div>
+
+<div class="col-lg-3 col-md-4 col-6">
+<a href="pages/pdf/unlock-pdf.html" class="tool-grid-card">
+<i class="fa-solid fa-lock-open text-danger"></i>
+<h5>Unlock PDF</h5>
+</a>
+</div>
+
+</div>
+</div>
+
+<!-- Category 2: Image Tools -->
+<div class="mb-5">
+<div class="d-flex align-items-center gap-2 mb-4">
+<i class="fa-solid fa-image text-primary fs-3"></i>
+<h3 class="fw-bold mb-0">Image Tools</h3>
+</div>
+<div class="row g-4">
+
+<div class="col-lg-3 col-md-4 col-6">
+<a href="pages/image/jpg-to-png.html" class="tool-grid-card">
+<i class="fa-solid fa-image text-primary"></i>
 <h5>JPG to PNG</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/image/png-to-jpg.html" class="tool text-decoration-none">
-<i class="fa-solid fa-file-image"></i>
+<a href="pages/image/png-to-jpg.html" class="tool-grid-card">
+<i class="fa-solid fa-file-image text-primary"></i>
 <h5>PNG to JPG</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/image/resize-image.html" class="tool text-decoration-none">
-<i class="fa-solid fa-expand"></i>
+<a href="pages/image/resize-image.html" class="tool-grid-card">
+<i class="fa-solid fa-expand text-primary"></i>
 <h5>Resize Image</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/image/compress-image.html" class="tool text-decoration-none">
-<i class="fa-solid fa-compress"></i>
+<a href="pages/image/compress-image.html" class="tool-grid-card">
+<i class="fa-solid fa-compress text-primary"></i>
 <h5>Compress Image</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/image/crop-image.html" class="tool text-decoration-none">
-<i class="fa-solid fa-crop"></i>
+<a href="pages/image/crop-image.html" class="tool-grid-card">
+<i class="fa-solid fa-crop text-primary"></i>
 <h5>Crop Image</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/image/remove-background.html" class="tool text-decoration-none">
-<i class="fa-solid fa-eraser"></i>
+<a href="pages/image/remove-background.html" class="tool-grid-card">
+<i class="fa-solid fa-eraser text-primary"></i>
 <h5>Remove Background</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/image/image-to-pdf.html" class="tool text-decoration-none">
-<i class="fa-solid fa-file-pdf"></i>
-<h5>Image to PDF</h5>
+<a href="pages/image/webp-converter.html" class="tool-grid-card">
+<i class="fa-solid fa-file-code text-primary"></i>
+<h5>WEBP Converter</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/image/webp-converter.html" class="tool text-decoration-none">
-<i class="fa-solid fa-file-image"></i>
-<h5>WEBP Converter</h5>
-</a>
-</div>
-<div class="col-lg-3 col-md-4 col-6">
-<a href="pages/image/watermark-image.html" class="tool text-decoration-none">
-<i class="fa-solid fa-droplet"></i>
+<a href="pages/image/watermark-image.html" class="tool-grid-card">
+<i class="fa-solid fa-droplet text-primary"></i>
 <h5>Watermark Image</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/image/ai-image-enhancer.html" class="tool text-decoration-none">
-<i class="fa-solid fa-wand-magic-sparkles"></i>
+<a href="pages/image/ai-image-enhancer.html" class="tool-grid-card">
+<i class="fa-solid fa-wand-magic-sparkles text-primary"></i>
 <h5>AI Image Enhancer</h5>
 </a>
 </div>
 
-<div class="col-lg-3 col-md-4 col-6">
-<a href="pages/video/video-compressor.html" class="tool text-decoration-none">
-<i class="fa-solid fa-video"></i>
-<h5>Video Compressor</h5>
-</a>
+</div>
 </div>
 
-<div class="col-lg-3 col-md-4 col-6">
-<a href="pages/video/video-to-mp3.html" class="tool text-decoration-none">
-<i class="fa-solid fa-music"></i>
-<h5>Video to MP3</h5>
-</a>
+<!-- Category 3: AI Tools -->
+<div class="mb-5">
+<div class="d-flex align-items-center gap-2 mb-4">
+<i class="fa-solid fa-robot text-info fs-3"></i>
+<h3 class="fw-bold mb-0">AI Tools</h3>
 </div>
+<div class="row g-4">
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/video/video-to-gif.html" class="tool text-decoration-none">
-<i class="fa-solid fa-film"></i>
-<h5>Video to GIF</h5>
-</a>
-</div>
-
-<div class="col-lg-3 col-md-4 col-6">
-<a href="pages/video/trim-video.html" class="tool text-decoration-none">
-<i class="fa-solid fa-scissors"></i>
-<h5>Trim Video</h5>
-</a>
-</div>
-
-<div class="col-lg-3 col-md-4 col-6">
-<a href="pages/video/merge-video.html" class="tool text-decoration-none">
-<i class="fa-solid fa-object-group"></i>
-<h5>Merge Video</h5>
-</a>
-</div>
-
-<div class="col-lg-3 col-md-4 col-6">
-<a href="pages/audio/mp3-cutter.html" class="tool text-decoration-none">
-<i class="fa-solid fa-cut"></i>
-<h5>MP3 Cutter</h5>
-</a>
-</div>
-
-<div class="col-lg-3 col-md-4 col-6">
-<a href="pages/audio/audio-converter.html" class="tool text-decoration-none">
-<i class="fa-solid fa-repeat"></i>
-<h5>Audio Converter</h5>
-</a>
-</div>
-
-<div class="col-lg-3 col-md-4 col-6">
-<a href="pages/audio/merge-audio.html" class="tool text-decoration-none">
-<i class="fa-solid fa-layer-group"></i>
-<h5>Merge Audio</h5>
-</a>
-</div>
-
-<div class="col-lg-3 col-md-4 col-6">
-<a href="pages/audio/voice-recorder.html" class="tool text-decoration-none">
-<i class="fa-solid fa-microphone"></i>
-<h5>Voice Recorder</h5>
-</a>
-</div>
-
-<div class="col-lg-3 col-md-4 col-6">
-<a href="pages/audio/volume-booster.html" class="tool text-decoration-none">
-<i class="fa-solid fa-volume-high"></i>
-<h5>Volume Booster</h5>
-</a>
-</div>
-
-<div class="col-lg-3 col-md-4 col-6">
-<a href="pages/ai/ai-chat.html" class="tool text-decoration-none">
-<i class="fa-solid fa-robot"></i>
+<a href="pages/ai/ai-chat.html" class="tool-grid-card">
+<i class="fa-solid fa-comments text-info"></i>
 <h5>AI Chat</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/ai/ai-writer.html" class="tool text-decoration-none">
-<i class="fa-solid fa-pen"></i>
+<a href="pages/ai/ai-writer.html" class="tool-grid-card">
+<i class="fa-solid fa-pen-nib text-info"></i>
 <h5>AI Writer</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/ai/ai-translator.html" class="tool text-decoration-none">
-<i class="fa-solid fa-language"></i>
+<a href="pages/ai/ai-translator.html" class="tool-grid-card">
+<i class="fa-solid fa-language text-info"></i>
 <h5>AI Translator</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/ai/ai-summarizer.html" class="tool text-decoration-none">
-<i class="fa-solid fa-file-lines"></i>
+<a href="pages/ai/ai-summarizer.html" class="tool-grid-card">
+<i class="fa-solid fa-file-lines text-info"></i>
 <h5>AI Summarizer</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/ai/ai-code-generator.html" class="tool text-decoration-none">
-<i class="fa-solid fa-code"></i>
+<a href="pages/ai/ai-code-generator.html" class="tool-grid-card">
+<i class="fa-solid fa-code text-info"></i>
 <h5>AI Code Generator</h5>
 </a>
 </div>
 
+</div>
+</div>
+
+<!-- Category 4: Video Tools -->
+<div class="mb-5">
+<div class="d-flex align-items-center gap-2 mb-4">
+<i class="fa-solid fa-video text-warning fs-3"></i>
+<h3 class="fw-bold mb-0">Video Tools</h3>
+</div>
+<div class="row g-4">
+
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/tools/qr-generator.html" class="tool text-decoration-none">
-<i class="fa-solid fa-qrcode"></i>
+<a href="pages/video/video-compressor.html" class="tool-grid-card">
+<i class="fa-solid fa-file-video text-warning"></i>
+<h5>Video Compressor</h5>
+</a>
+</div>
+
+<div class="col-lg-3 col-md-4 col-6">
+<a href="pages/video/video-to-mp3.html" class="tool-grid-card">
+<i class="fa-solid fa-music text-warning"></i>
+<h5>Video to MP3</h5>
+</a>
+</div>
+
+<div class="col-lg-3 col-md-4 col-6">
+<a href="pages/video/video-to-gif.html" class="tool-grid-card">
+<i class="fa-solid fa-film text-warning"></i>
+<h5>Video to GIF</h5>
+</a>
+</div>
+
+<div class="col-lg-3 col-md-4 col-6">
+<a href="pages/video/trim-video.html" class="tool-grid-card">
+<i class="fa-solid fa-scissors text-warning"></i>
+<h5>Trim Video</h5>
+</a>
+</div>
+
+<div class="col-lg-3 col-md-4 col-6">
+<a href="pages/video/merge-video.html" class="tool-grid-card">
+<i class="fa-solid fa-layer-group text-warning"></i>
+<h5>Merge Video</h5>
+</a>
+</div>
+
+</div>
+</div>
+
+<!-- Category 5: Audio Tools -->
+<div class="mb-5">
+<div class="d-flex align-items-center gap-2 mb-4">
+<i class="fa-solid fa-headphones text-success fs-3"></i>
+<h3 class="fw-bold mb-0">Audio Tools</h3>
+</div>
+<div class="row g-4">
+
+<div class="col-lg-3 col-md-4 col-6">
+<a href="pages/audio/mp3-cutter.html" class="tool-grid-card">
+<i class="fa-solid fa-sliders text-success"></i>
+<h5>MP3 Cutter</h5>
+</a>
+</div>
+
+<div class="col-lg-3 col-md-4 col-6">
+<a href="pages/audio/audio-converter.html" class="tool-grid-card">
+<i class="fa-solid fa-repeat text-success"></i>
+<h5>Audio Converter</h5>
+</a>
+</div>
+
+<div class="col-lg-3 col-md-4 col-6">
+<a href="pages/audio/voice-recorder.html" class="tool-grid-card">
+<i class="fa-solid fa-microphone text-success"></i>
+<h5>Voice Recorder</h5>
+</a>
+</div>
+
+<div class="col-lg-3 col-md-4 col-6">
+<a href="pages/audio/volume-booster.html" class="tool-grid-card">
+<i class="fa-solid fa-volume-high text-success"></i>
+<h5>Volume Booster</h5>
+</a>
+</div>
+
+</div>
+</div>
+
+<!-- Category 6: Utility Tools -->
+<div class="mb-5">
+<div class="d-flex align-items-center gap-2 mb-4">
+<i class="fa-solid fa-screwdriver-wrench text-secondary fs-3"></i>
+<h3 class="fw-bold mb-0">Utility Tools</h3>
+</div>
+<div class="row g-4">
+
+<div class="col-lg-3 col-md-4 col-6">
+<a href="pages/tools/qr-generator.html" class="tool-grid-card">
+<i class="fa-solid fa-qrcode text-secondary"></i>
 <h5>QR Generator</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/tools/password-generator.html" class="tool text-decoration-none">
-<i class="fa-solid fa-key"></i>
+<a href="pages/tools/qr-scanner.html" class="tool-grid-card">
+<i class="fa-solid fa-expand text-secondary"></i>
+<h5>QR Scanner</h5>
+</a>
+</div>
+
+<div class="col-lg-3 col-md-4 col-6">
+<a href="pages/tools/password-generator.html" class="tool-grid-card">
+<i class="fa-solid fa-key text-secondary"></i>
 <h5>Password Generator</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/tools/text-counter.html" class="tool text-decoration-none">
-<i class="fa-solid fa-file-lines"></i>
+<a href="pages/tools/text-counter.html" class="tool-grid-card">
+<i class="fa-solid fa-calculator text-secondary"></i>
 <h5>Text Counter</h5>
 </a>
 </div>
 
 <div class="col-lg-3 col-md-4 col-6">
-<a href="pages/tools/unit-converter.html" class="tool text-decoration-none">
-<i class="fa-solid fa-ruler"></i>
+<a href="pages/tools/unit-converter.html" class="tool-grid-card">
+<i class="fa-solid fa-ruler-combined text-secondary"></i>
 <h5>Unit Converter</h5>
 </a>
 </div>
 
+<div class="col-lg-3 col-md-4 col-6">
+<a href="pages/tools/markdown-editor.html" class="tool-grid-card">
+<i class="fa-solid fa-file-lines text-secondary"></i>
+<h5>Markdown Editor</h5>
+</a>
+</div>
 
+<div class="col-lg-3 col-md-4 col-6">
+<a href="pages/tools/color-picker.html" class="tool-grid-card">
+<i class="fa-solid fa-eye-dropper text-secondary"></i>
+<h5>Color Picker</h5>
+</a>
+</div>
+
+</div>
 </div>
 
 </section>
 
 <footer>
-<p>© 2026 ConvertHub</p>
+<div class="container py-3">
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 text-muted small">
+<div>
+<span class="fw-bold text-primary fs-6"><i class="fa-solid fa-bolt"></i> ConvertHub</span>
+<span class="badge bg-primary bg-opacity-10 text-primary ms-2">v2.5.0 Pro</span>
+</div>
+<div class="d-flex gap-3">
+<a href="#" onclick="openPrivacyPolicy(); return false;" class="text-decoration-none text-reset">Privacy Policy</a>
+<a href="#" onclick="openTermsOfService(); return false;" class="text-decoration-none text-reset">Terms of Service</a>
+<a href="mailto:support@converthub.app" class="text-decoration-none text-reset">Contact Support</a>
+</div>
+<div>
+© 2026 ConvertHub — All-in-One Online Conversion & AI Tools
+</div>
+</div>
+</div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="script.js"></script>
 
 </body>
-</html>DOCTYPE 
+</html>

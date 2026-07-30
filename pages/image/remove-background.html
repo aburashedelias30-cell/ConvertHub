@@ -1,97 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Remove Background - ConvertHub</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<style>
-
-body{
-background:#f5f5f5;
-padding:40px;
-}
-
-.box{
-max-width:700px;
-margin:auto;
-background:white;
-padding:30px;
-border-radius:20px;
-box-shadow:0 0 20px rgba(0,0,0,.1);
-text-align:center;
-}
-
-img{
-max-width:100%;
-margin-top:20px;
-border-radius:10px;
-}
-
-</style>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link rel="stylesheet" href="../../style.css">
 </head>
 
 <body>
 
-<div class="box">
+<nav class="navbar navbar-expand-lg bg-white shadow-sm">
+<div class="container">
+<a class="navbar-brand fw-bold fs-2 text-primary" href="../../index.html">
+<i class="fa-solid fa-bolt"></i> ConvertHub
+</a>
+<div class="ms-auto d-flex align-items-center gap-2">
+<button id="darkBtn" class="btn btn-outline-secondary rounded-circle px-3 py-2">🌙</button>
+<a href="../../index.html" class="btn btn-outline-primary rounded-pill">⬅ All Tools</a>
+</div>
+</div>
+</nav>
 
-<h1>🪄 Remove Background</h1>
-
-<p>Upload an image</p>
-
-<input
-type="file"
-id="image"
-accept="image/*"
-class="form-control">
-
-<br>
-
-<button
-id="remove"
-class="btn btn-primary">
-
-Remove Background
-
-</button>
-
-<br><br>
-
-<img id="preview">
-
+<div class="container">
+<div class="tool-container my-5">
+<div class="text-center mb-4">
+<i class="fa-solid fa-eraser text-primary display-4 mb-2"></i>
+<h2 class="fw-bold">Remove Background</h2>
+<p class="text-muted">Remove solid or uniform background colors from your image to make transparent PNGs.</p>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@imgly/background-removal/dist/browser.js"></script>
+<div class="dropzone mb-4" id="dropzone">
+<i class="fa-solid fa-file-image"></i>
+<h5 class="fw-bold">Drag & Drop an image here</h5>
+<p class="text-muted small">or click to browse from your device</p>
+<input type="file" id="image" accept="image/*" class="d-none">
+</div>
 
+<div id="fileList" class="mb-4"></div>
+
+<div id="bgOptions" class="card p-3 mb-4 d-none">
+<div class="row g-3 align-items-center">
+<div class="col-md-6">
+<label for="toleranceRange" class="form-label fw-bold d-flex justify-content-between">
+<span>Color Tolerance:</span>
+<span id="toleranceVal" class="text-primary">30</span>
+</label>
+<input type="range" class="form-range" id="toleranceRange" min="5" max="100" value="30">
+</div>
+<div class="col-md-6">
+<label for="targetBg" class="form-label fw-bold">Detect Background Mode:</label>
+<select id="targetBg" class="form-select">
+<option value="auto">Auto-detect Top-Left Pixel Color</option>
+<option value="white">Remove White Background</option>
+<option value="black">Remove Black Background</option>
+</select>
+</div>
+</div>
+</div>
+
+<div class="d-grid gap-2">
+<button id="removeBg" class="btn btn-primary btn-lg rounded-pill fw-bold" disabled>
+<i class="fa-solid fa-eraser me-2"></i> Remove Background
+</button>
+<a id="download" class="btn btn-success btn-lg rounded-pill fw-bold d-none">
+<i class="fa-solid fa-download me-2"></i> Download Transparent PNG
+</a>
+</div>
+
+<div id="previewCard" class="card p-3 mt-4 text-center d-none" style="background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px;">
+<h5 class="bg-white p-2 rounded d-inline-block mx-auto">Transparent Image Result:</h5>
+<img id="previewImg" class="img-fluid rounded mx-auto mt-2" style="max-height:350px; object-fit:contain;">
+</div>
+
+<div id="statusAlert" class="mt-3"></div>
+</div>
+</div>
+
+<footer>
+<div class="container"><p class="mb-0">© 2026 ConvertHub — Free Online Tool</p></div>
+</footer>
+
+<script src="../../script.js"></script>
 <script>
+setupDropzone("dropzone", "image", "fileList");
 
-const btn=document.getElementById("remove");
+const imageInput = document.getElementById("image");
+const removeBgBtn = document.getElementById("removeBg");
+const downloadBtn = document.getElementById("download");
+const bgOptions = document.getElementById("bgOptions");
+const toleranceRange = document.getElementById("toleranceRange");
+const toleranceVal = document.getElementById("toleranceVal");
+const targetBg = document.getElementById("targetBg");
+const previewCard = document.getElementById("previewCard");
+const previewImg = document.getElementById("previewImg");
+const statusAlert = document.getElementById("statusAlert");
 
-btn.onclick=async()=>{
+toleranceRange.oninput = () => {
+    toleranceVal.innerText = toleranceRange.value;
+};
 
-const file=document.getElementById("image").files[0];
+imageInput.addEventListener("change", () => {
+    if (imageInput.files.length === 0) return;
+    bgOptions.classList.remove("d-none");
+    removeBgBtn.disabled = false;
+    downloadBtn.classList.add("d-none");
+    previewCard.classList.add("d-none");
+    statusAlert.innerHTML = "";
+});
 
-if(!file){
+removeBgBtn.onclick = () => {
+    const file = imageInput.files[0];
+    if (!file) return;
 
-alert("Choose image");
+    removeBgBtn.disabled = true;
+    removeBgBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Processing Image...`;
 
-return;
+    const img = new Image();
+    const reader = new FileReader();
 
-}
+    reader.onload = (e) => {
+        img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
 
-const blob=await removeBackground(file);
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imgData.data;
+            const tolerance = parseInt(toleranceRange.value);
 
-document.getElementById("preview").src=
-URL.createObjectURL(blob);
+            let bgR = 255, bgG = 255, bgB = 255;
+            if (targetBg.value === "auto") {
+                bgR = data[0]; bgG = data[1]; bgB = data[2];
+            } else if (targetBg.value === "black") {
+                bgR = 0; bgG = 0; bgB = 0;
+            }
 
-}
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
 
+                const diff = Math.sqrt((r - bgR) ** 2 + (g - bgG) ** 2 + (b - bgB) ** 2);
+                if (diff < tolerance) {
+                    data[i + 3] = 0; // Transparent
+                }
+            }
+
+            ctx.putImageData(imgData, 0, 0);
+            const resultUrl = canvas.toDataURL("image/png");
+
+            previewImg.src = resultUrl;
+            previewCard.classList.remove("d-none");
+
+            downloadBtn.href = resultUrl;
+            downloadBtn.download = "bg_removed_" + file.name.replace(/\.[^/.]+$/, ".png");
+            downloadBtn.classList.remove("d-none");
+
+            statusAlert.innerHTML = `<div class="alert alert-success">Background removed! Exported transparent PNG file.</div>`;
+            removeBgBtn.disabled = false;
+            removeBgBtn.innerHTML = `<i class="fa-solid fa-eraser me-2"></i> Remove Background`;
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+};
 </script>
-
 </body>
 </html>

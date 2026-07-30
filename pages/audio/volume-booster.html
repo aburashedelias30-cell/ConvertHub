@@ -1,7 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Volume Booster - ConvertHub</title>
 
-<h1 class="text-center mb-3">Volume Booster</h1>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link rel="stylesheet" href="../../style.css">
+</head>
 
-<p class="text-center text-muted">
-Increase audio volume online.
-</p>
+<body>
+
+<nav class="navbar navbar-expand-lg bg-white shadow-sm">
+<div class="container">
+<a class="navbar-brand fw-bold fs-2 text-primary" href="../../index.html">
+<i class="fa-solid fa-bolt"></i> ConvertHub
+</a>
+<div class="ms-auto d-flex align-items-center gap-2">
+<button id="darkBtn" class="btn btn-outline-secondary rounded-circle px-3 py-2">🌙</button>
+<a href="../../index.html" class="btn btn-outline-primary rounded-pill">⬅ All Tools</a>
+</div>
+</div>
+</nav>
+
+<div class="container">
+<div class="tool-container my-5">
+<div class="text-center mb-4">
+<i class="fa-solid fa-volume-high text-warning display-4 mb-2"></i>
+<h2 class="fw-bold">Audio Volume Booster</h2>
+<p class="text-muted">Boost the volume level of quiet audio files up to 300% without distortion.</p>
+</div>
+
+<div class="dropzone mb-4" id="dropzone">
+<i class="fa-solid fa-file-audio"></i>
+<h5 class="fw-bold">Drag & Drop an audio file here</h5>
+<p class="text-muted small">or click to browse MP3, WAV, OGG</p>
+<input type="file" id="audio" accept="audio/*" class="d-none">
+</div>
+
+<div id="fileList" class="mb-4"></div>
+
+<div id="boostOptions" class="card p-3 mb-4 d-none">
+<label for="gainRange" class="form-label fw-bold d-flex justify-content-between">
+<span>Volume Gain Multiplier:</span>
+<span id="gainVal" class="text-primary fs-5">200% (+6 dB)</span>
+</label>
+<input type="range" class="form-range" id="gainRange" min="100" max="300" step="10" value="200">
+</div>
+
+<div class="d-grid gap-2">
+<button id="boostBtn" class="btn btn-primary btn-lg rounded-pill fw-bold" disabled>
+<i class="fa-solid fa-volume-high me-2"></i> Boost Volume
+</button>
+<a id="download" class="btn btn-success btn-lg rounded-pill fw-bold d-none">
+<i class="fa-solid fa-download me-2"></i> Download Boosted Audio
+</a>
+</div>
+
+<div id="statusAlert" class="mt-3"></div>
+</div>
+</div>
+
+<footer>
+<div class="container"><p class="mb-0">© 2026 ConvertHub — Free Online Tool</p></div>
+</footer>
+
+<script src="../../script.js"></script>
+<script>
+setupDropzone("dropzone", "audio", "fileList");
+
+const audioInput = document.getElementById("audio");
+const boostBtn = document.getElementById("boostBtn");
+const downloadBtn = document.getElementById("download");
+const boostOptions = document.getElementById("boostOptions");
+const gainRange = document.getElementById("gainRange");
+const gainVal = document.getElementById("gainVal");
+const statusAlert = document.getElementById("statusAlert");
+
+gainRange.oninput = () => {
+    gainVal.innerText = `${gainRange.value}%`;
+};
+
+audioInput.addEventListener("change", () => {
+    if (audioInput.files.length === 0) return;
+    boostOptions.classList.remove("d-none");
+    boostBtn.disabled = false;
+    downloadBtn.classList.add("d-none");
+    statusAlert.innerHTML = "";
+});
+
+boostBtn.onclick = async () => {
+    const file = audioInput.files[0];
+    if (!file) return;
+
+    boostBtn.disabled = true;
+    boostBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Processing Gain...`;
+
+    try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const arrayBuffer = await file.arrayBuffer();
+        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+
+        const multiplier = parseInt(gainRange.value) / 100;
+        const offlineCtx = new OfflineAudioContext(
+            audioBuffer.numberOfChannels,
+            audioBuffer.length,
+            audioBuffer.sampleRate
+        );
+
+        const source = offlineCtx.createBufferSource();
+        source.buffer = audioBuffer;
+
+        const gainNode = offlineCtx.createGain();
+        gainNode.gain.value = multiplier;
+
+        source.connect(gainNode);
+        gainNode.connect(offlineCtx.destination);
+        source.start();
+
+        const renderedBuffer = await offlineCtx.startRendering();
+
+        // Convert rendered audio buffer to WAV blob
+        const numChannels = renderedBuffer.numberOfChannels;
+        const sampleRate = renderedBuffer.sampleRate;
+        const channelData = [];
+        for (let c = 0; c < numChannels; c++) {
+            channelData.push(renderedBuffer.getChannelData(c));
+        }
+
+        const wavBlob = bufferToWavBlob(channelData, numChannels, sampleRate);
+        const url = URL.createObjectURL(wavBlob);
+
+        downloadBtn.href = url;
+        downloadBtn.download = "boosted_" + file.name.replace(/\.[^/.]+$/, ".wav");
+        downloadBtn.classList.remove("d-none");
+
+        statusAlert.innerHTML = `<div class="alert alert-success">Volume boosted by ${gainRange.value}%! Click download below.</div>`;
+    } catch (err) {
+        statusAlert.innerHTML = `<div class="alert alert-danger">Error boosting audio: ${err.message}</div>`;
+    } finally {
+        boostBtn.disabled = false;
+        boostBtn.innerHTML = `<i class="fa-solid fa-volume-high me-2"></i> Boost Volume`;
+    }
+};
+
+function bufferToWavBlob(channelData, numChannels, sampleRate) {
+    const length = channelData[0].length;
+    const buffer = new ArrayBuffer(44 + length * numChannels * 2);
+    const view = new DataView(buffer);
+
+    function writeString(offset, string) {
+        for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i));
+    }
+
+    writeString(0, 'RIFF');
+    view.setUint32(4, 36 + length * numChannels * 2, true);
+    writeString(8, 'WAVE');
+    writeString(12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, numChannels, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * numChannels * 2, true);
+    view.setUint16(32, numChannels * 2, true);
+    view.setUint16(34, 16, true);
+    writeString(36, 'data');
+    view.setUint32(40, length * numChannels * 2, true);
+
+    let offset = 44;
+    for (let i = 0; i < length; i++) {
+        for (let c = 0; c < numChannels; c++) {
+            const s = Math.max(-1, Math.min(1, channelData[c][i]));
+            view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+            offset += 2;
+        }
+    }
+    return new Blob([buffer], { type: 'audio/wav' });
+}
+</script>
+</body>
+</html>

@@ -1,122 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Compress PDF - ConvertHub</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<style>
-
-body{
-background:#f5f5f5;
-padding:40px;
-}
-
-.box{
-max-width:700px;
-margin:auto;
-background:white;
-padding:30px;
-border-radius:15px;
-box-shadow:0 0 15px rgba(0,0,0,.1);
-text-align:center;
-}
-
-</style>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link rel="stylesheet" href="../../style.css">
 </head>
 
 <body>
 
-<div class="box">
-
-<h1>📦 Compress PDF</h1>
-
-<p>Select a PDF file to compress.</p>
-
-<form id="form">
-
-<input
-type="file"
-name="pdf"
-accept=".pdf"
-class="form-control mb-3"
-required>
-
-<button
-type="submit"
-class="btn btn-primary">
-
-Compress PDF
-
-</button>
-
-</form>
-
-<div id="result" class="mt-3"></div>
-
-<br>
-
-<a href="../../index.html" class="btn btn-secondary">
-⬅ Back Home
+<nav class="navbar navbar-expand-lg bg-white shadow-sm">
+<div class="container">
+<a class="navbar-brand fw-bold fs-2 text-primary" href="../../index.html">
+<i class="fa-solid fa-bolt"></i> ConvertHub
 </a>
+<div class="ms-auto d-flex align-items-center gap-2">
+<button id="darkBtn" class="btn btn-outline-secondary rounded-circle px-3 py-2">🌙</button>
+<a href="../../index.html" class="btn btn-outline-primary rounded-pill">⬅ All Tools</a>
+</div>
+</div>
+</nav>
 
+<div class="container">
+<div class="tool-container my-5">
+<div class="text-center mb-4">
+<i class="fa-solid fa-file-zipper text-danger display-4 mb-2"></i>
+<h2 class="fw-bold">Compress PDF Document</h2>
+<p class="text-muted">Reduce the file size of your PDF while maintaining optimal document quality.</p>
 </div>
 
+<div class="dropzone mb-4" id="dropzone">
+<i class="fa-solid fa-cloud-arrow-up"></i>
+<h5 class="fw-bold">Drag & Drop a PDF file here</h5>
+<p class="text-muted small">or click to browse from your device</p>
+<input type="file" id="pdf" accept=".pdf" class="d-none">
+</div>
+
+<div id="fileList" class="mb-4"></div>
+
+<div class="d-grid gap-2">
+<button id="compress" class="btn btn-primary btn-lg rounded-pill fw-bold" disabled>
+<i class="fa-solid fa-file-zipper me-2"></i> Compress PDF
+</button>
+<a id="download" class="btn btn-success btn-lg rounded-pill fw-bold d-none">
+<i class="fa-solid fa-download me-2"></i> Download Compressed PDF
+</a>
+</div>
+
+<div id="statusAlert" class="mt-3"></div>
+</div>
+</div>
+
+<footer>
+<div class="container"><p class="mb-0">© 2026 ConvertHub — Free Online Tool</p></div>
+</footer>
+
+<script src="../../script.js"></script>
 <script>
+setupDropzone("dropzone", "pdf", "fileList");
 
-const form=document.getElementById("form");
-const result=document.getElementById("result");
+const fileInput = document.getElementById("pdf");
+const compressBtn = document.getElementById("compress");
+const downloadBtn = document.getElementById("download");
+const statusAlert = document.getElementById("statusAlert");
 
-form.addEventListener("submit",async(e)=>{
-
-e.preventDefault();
-
-result.innerHTML="Compressing PDF...";
-
-const data=new FormData(form);
-
-const res=await fetch("/compress",{
-
-method:"POST",
-
-body:data
-
+fileInput.addEventListener("change", () => {
+    compressBtn.disabled = fileInput.files.length === 0;
+    downloadBtn.classList.add("d-none");
+    statusAlert.innerHTML = "";
 });
 
-if(!res.ok){
+compressBtn.onclick = async () => {
+    const file = fileInput.files[0];
+    if (!file) return;
 
-result.innerHTML="Compression failed";
+    compressBtn.disabled = true;
+    compressBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Compressing PDF...`;
+    statusAlert.innerHTML = "";
 
-return;
+    const formData = new FormData();
+    formData.append("pdf", file);
 
-}
+    try {
+        const res = await fetch("/compress", {
+            method: "POST",
+            body: formData
+        });
 
-const blob=await res.blob();
+        if (!res.ok) throw new Error("Server returned compression error");
 
-const url=window.URL.createObjectURL(blob);
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
 
-const a=document.createElement("a");
+        downloadBtn.href = url;
+        downloadBtn.download = "compressed_" + file.name;
+        downloadBtn.classList.remove("d-none");
 
-a.href=url;
-
-a.download="compressed.pdf";
-
-a.click();
-
-window.URL.revokeObjectURL(url);
-
-result.innerHTML="✅ PDF compressed successfully.";
-
-});
-
+        const origMB = (file.size / (1024 * 1024)).toFixed(2);
+        const compMB = (blob.size / (1024 * 1024)).toFixed(2);
+        statusAlert.innerHTML = `<div class="alert alert-success">PDF Compressed! Original: ${origMB} MB → Compressed: ${compMB} MB.</div>`;
+    } catch (err) {
+        statusAlert.innerHTML = `<div class="alert alert-danger">Compression failed: ${err.message}</div>`;
+    } finally {
+        compressBtn.disabled = false;
+        compressBtn.innerHTML = `<i class="fa-solid fa-file-zipper me-2"></i> Compress PDF`;
+    }
+};
 </script>
-
 </body>
-
 </html>

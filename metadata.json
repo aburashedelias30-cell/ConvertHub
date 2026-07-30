@@ -1,0 +1,8 @@
+{
+  "name": "ConvertHub",
+  "description": "Free online file conversion and PDF tools for documents, images, audio, and video.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,7 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Translator - ConvertHub</title>
 
-<h1 class="text-center mb-3">AI Translator</h1>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link rel="stylesheet" href="../../style.css">
+</head>
 
-<p class="text-center text-muted">
-Translate text into multiple languages.
-</p>
+<body>
+
+<nav class="navbar navbar-expand-lg bg-white shadow-sm">
+<div class="container">
+<a class="navbar-brand fw-bold fs-2 text-primary" href="../../index.html">
+<i class="fa-solid fa-bolt"></i> ConvertHub
+</a>
+<div class="ms-auto d-flex align-items-center gap-2">
+<button id="darkBtn" class="btn btn-outline-secondary rounded-circle px-3 py-2">🌙</button>
+<a href="../../index.html" class="btn btn-outline-primary rounded-pill">⬅ All Tools</a>
+</div>
+</div>
+</nav>
+
+<div class="container">
+<div class="tool-container my-5" style="max-width: 900px;">
+<div class="text-center mb-4">
+<i class="fa-solid fa-language text-info display-4 mb-2"></i>
+<h2 class="fw-bold">AI Multi-Language Translator</h2>
+<p class="text-muted">Accurately translate text between 50+ languages with natural tone understanding.</p>
+</div>
+
+<div class="row g-3 mb-4">
+<div class="col-md-6">
+<label for="targetLang" class="form-label fw-bold">Translate To:</label>
+<select id="targetLang" class="form-select">
+<option value="Spanish">Spanish</option>
+<option value="French">French</option>
+<option value="German">German</option>
+<option value="Italian">Italian</option>
+<option value="Portuguese">Portuguese</option>
+<option value="Chinese (Mandarin)">Chinese (Mandarin)</option>
+<option value="Japanese">Japanese</option>
+<option value="Korean">Korean</option>
+<option value="Arabic">Arabic</option>
+<option value="Russian">Russian</option>
+<option value="Hindi">Hindi</option>
+<option value="Dutch">Dutch</option>
+<option value="Turkish">Turkish</option>
+</select>
+</div>
+<div class="col-md-6 d-flex align-items-end">
+<button id="translateBtn" class="btn btn-primary w-100 btn-lg rounded-pill fw-bold">
+<i class="fa-solid fa-language me-2"></i> Translate Text
+</button>
+</div>
+</div>
+
+<div class="row g-3">
+<div class="col-md-6">
+<label for="inputText" class="form-label fw-bold">Source Text:</label>
+<textarea id="inputText" class="form-control" rows="8" placeholder="Type or paste text to translate..."></textarea>
+</div>
+<div class="col-md-6">
+<div class="d-flex justify-content-between align-items-center mb-2">
+<label class="form-label fw-bold mb-0">Translation Result:</label>
+<button id="copyBtn" class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-copy"></i> Copy</button>
+</div>
+<textarea id="outputText" class="form-control" rows="8" readonly placeholder="Translation will appear here..."></textarea>
+</div>
+</div>
+
+<div id="statusAlert" class="mt-3"></div>
+</div>
+</div>
+
+<footer>
+<div class="container"><p class="mb-0">© 2026 ConvertHub — Free Online Tool</p></div>
+</footer>
+
+<script src="../../script.js"></script>
+<script>
+const inputText = document.getElementById("inputText");
+const outputText = document.getElementById("outputText");
+const targetLang = document.getElementById("targetLang");
+const translateBtn = document.getElementById("translateBtn");
+const copyBtn = document.getElementById("copyBtn");
+const statusAlert = document.getElementById("statusAlert");
+
+translateBtn.onclick = async () => {
+    const text = inputText.value.trim();
+    if (!text) {
+        statusAlert.innerHTML = `<div class="alert alert-warning">Please enter text to translate.</div>`;
+        return;
+    }
+
+    translateBtn.disabled = true;
+    translateBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Translating...`;
+    statusAlert.innerHTML = "";
+
+    const prompt = `Translate the following text accurately into ${targetLang.value}. Provide only the clear translated text without conversational intro/outro:\n\n${text}`;
+
+    try {
+        const res = await fetch("/api/ai/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Translation failed");
+
+        outputText.value = data.text;
+        statusAlert.innerHTML = `<div class="alert alert-success">Translated into ${targetLang.value} successfully!</div>`;
+    } catch (err) {
+        statusAlert.innerHTML = `<div class="alert alert-danger">Error: ${err.message}</div>`;
+    } finally {
+        translateBtn.disabled = false;
+        translateBtn.innerHTML = `<i class="fa-solid fa-language me-2"></i> Translate Text`;
+    }
+};
+
+copyBtn.onclick = () => {
+    if (outputText.value) {
+        navigator.clipboard.writeText(outputText.value);
+        copyBtn.innerHTML = `<i class="fa-solid fa-check me-1"></i> Copied!`;
+        setTimeout(() => { copyBtn.innerHTML = `<i class="fa-solid fa-copy"></i> Copy`; }, 2000);
+    }
+};
+</script>
+</body>
+</html>

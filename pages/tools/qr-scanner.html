@@ -1,7 +1,207 @@
-<title>QR Scanner - ConvertHub</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR Code Scanner - ConvertHub</title>
 
-<h1 class="text-center mb-3">QR Scanner</h1>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link rel="stylesheet" href="../../style.css">
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+</head>
 
-<p class="text-center text-muted">
-Scan QR codes using your device.
-</p>
+<body>
+
+<nav class="navbar navbar-expand-lg bg-white shadow-sm">
+<div class="container">
+<a class="navbar-brand fw-bold fs-2 text-primary" href="../../index.html">
+<i class="fa-solid fa-bolt"></i> ConvertHub
+</a>
+<div class="ms-auto d-flex align-items-center gap-2">
+<button id="darkBtn" class="btn btn-outline-secondary rounded-circle px-3 py-2">🌙</button>
+<a href="../../index.html" class="btn btn-outline-primary rounded-pill">⬅ All Tools</a>
+</div>
+</div>
+</nav>
+
+<div class="container">
+<div class="tool-container my-5">
+<div class="text-center mb-4">
+<i class="fa-solid fa-expand text-success display-4 mb-2"></i>
+<h2 class="fw-bold">Online QR Code Scanner</h2>
+<p class="text-muted">Scan QR codes instantly from uploaded images or using your device camera.</p>
+</div>
+
+<ul class="nav nav-pills nav-justified mb-4" id="scanTabs" role="tablist">
+<li class="nav-item" role="presentation">
+<button class="nav-link active fw-bold" id="upload-tab" data-bs-toggle="pill" data-bs-target="#upload-pane" type="button"><i class="fa-solid fa-upload me-2"></i> Upload Image</button>
+</li>
+<li class="nav-item" role="presentation">
+<button class="nav-link fw-bold" id="camera-tab" data-bs-toggle="pill" data-bs-target="#camera-pane" type="button"><i class="fa-solid fa-camera me-2"></i> Live Camera</button>
+</li>
+</ul>
+
+<div class="tab-content" id="scanTabsContent">
+<!-- Pane 1: Upload File -->
+<div class="tab-pane fade show active" id="upload-pane">
+<div class="dropzone mb-4" id="dropzone">
+<i class="fa-solid fa-qrcode"></i>
+<h5 class="fw-bold">Drag & Drop QR Code Image Here</h5>
+<p class="text-muted small">or click to upload PNG, JPG, WEBP</p>
+<input type="file" id="qrImage" accept="image/*" class="d-none">
+</div>
+<div id="fileList" class="mb-3"></div>
+</div>
+
+<!-- Pane 2: Live Camera -->
+<div class="tab-pane fade" id="camera-pane">
+<div class="card p-3 text-center mb-4">
+<div class="position-relative mx-auto bg-dark rounded overflow-hidden mb-3" style="max-width: 450px; min-height: 250px;">
+<video id="webcam" class="w-100 h-100" style="object-fit: cover;" autoplay playsinline muted></video>
+<canvas id="qrCanvas" class="d-none"></canvas>
+</div>
+<div class="d-flex justify-content-center gap-2">
+<button id="startCamBtn" class="btn btn-primary rounded-pill fw-bold px-4"><i class="fa-solid fa-video me-2"></i> Start Camera Scanner</button>
+<button id="stopCamBtn" class="btn btn-secondary rounded-pill fw-bold px-4 d-none"><i class="fa-solid fa-video-slash me-2"></i> Stop Camera</button>
+</div>
+</div>
+</div>
+</div>
+
+<div id="resultCard" class="card p-4 mt-4 d-none">
+<h5 class="fw-bold text-success mb-2"><i class="fa-solid fa-circle-check me-2"></i> Scanned QR Code Result:</h5>
+<div class="p-3 bg-light rounded font-monospace fs-5 text-break mb-3" id="scannedText"></div>
+<div class="d-flex flex-wrap gap-2">
+<button id="copyResultBtn" class="btn btn-primary rounded-pill fw-bold"><i class="fa-solid fa-copy me-2"></i> Copy Content</button>
+<a id="openLinkBtn" target="_blank" class="btn btn-outline-success rounded-pill fw-bold d-none"><i class="fa-solid fa-arrow-up-right-from-square me-2"></i> Open URL Link</a>
+</div>
+</div>
+
+<div id="statusAlert" class="mt-3"></div>
+</div>
+</div>
+
+<footer>
+<div class="container"><p class="mb-0">© 2026 ConvertHub — Free Online Tool</p></div>
+</footer>
+
+<script src="../../script.js"></script>
+<script>
+setupDropzone("dropzone", "qrImage", "fileList");
+
+const qrImageInput = document.getElementById("qrImage");
+const resultCard = document.getElementById("resultCard");
+const scannedText = document.getElementById("scannedText");
+const copyResultBtn = document.getElementById("copyResultBtn");
+const openLinkBtn = document.getElementById("openLinkBtn");
+const statusAlert = document.getElementById("statusAlert");
+
+const webcam = document.getElementById("webcam");
+const qrCanvas = document.getElementById("qrCanvas");
+const startCamBtn = document.getElementById("startCamBtn");
+const stopCamBtn = document.getElementById("stopCamBtn");
+
+let animationFrameId = null;
+let streamInstance = null;
+
+// File Upload Scanner
+qrImageInput.addEventListener("change", () => {
+    if (qrImageInput.files.length === 0) return;
+    const file = qrImageInput.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+            if (code && code.data) {
+                showResult(code.data);
+                statusAlert.innerHTML = `<div class="alert alert-success">QR Code successfully detected!</div>`;
+            } else {
+                statusAlert.innerHTML = `<div class="alert alert-warning">No QR code found in the image. Please try a clearer photo.</div>`;
+            }
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+});
+
+// Live Camera Scanner
+startCamBtn.onclick = async () => {
+    try {
+        streamInstance = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+        webcam.srcObject = streamInstance;
+        webcam.setAttribute("playsinline", true);
+        webcam.play();
+
+        startCamBtn.classList.add("d-none");
+        stopCamBtn.classList.remove("d-none");
+        statusAlert.innerHTML = `<div class="alert alert-info">Camera active. Point your camera at a QR code...</div>`;
+
+        requestAnimationFrame(tickScan);
+    } catch (err) {
+        statusAlert.innerHTML = `<div class="alert alert-danger">Camera error: ${err.message}. Please allow camera permissions.</div>`;
+    }
+};
+
+stopCamBtn.onclick = stopCamera;
+
+function stopCamera() {
+    if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    if (streamInstance) {
+        streamInstance.getTracks().forEach(track => track.stop());
+        streamInstance = null;
+    }
+    startCamBtn.classList.remove("d-none");
+    stopCamBtn.classList.add("d-none");
+}
+
+function tickScan() {
+    if (webcam.readyState === webcam.HAVE_ENOUGH_DATA) {
+        qrCanvas.height = webcam.videoHeight;
+        qrCanvas.width = webcam.videoWidth;
+        const ctx = qrCanvas.getContext("2d");
+        ctx.drawImage(webcam, 0, 0, qrCanvas.width, qrCanvas.height);
+
+        const imageData = ctx.getImageData(0, 0, qrCanvas.width, qrCanvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+        if (code && code.data) {
+            showResult(code.data);
+            statusAlert.innerHTML = `<div class="alert alert-success">QR Code scanned successfully!</div>`;
+            stopCamera();
+            return;
+        }
+    }
+    animationFrameId = requestAnimationFrame(tickScan);
+}
+
+function showResult(text) {
+    scannedText.innerText = text;
+    resultCard.classList.remove("d-none");
+
+    if (text.startsWith("http://") || text.startsWith("https://")) {
+        openLinkBtn.href = text;
+        openLinkBtn.classList.remove("d-none");
+    } else {
+        openLinkBtn.classList.add("d-none");
+    }
+}
+
+copyResultBtn.onclick = () => {
+    navigator.clipboard.writeText(scannedText.innerText);
+    copyResultBtn.innerHTML = `<i class="fa-solid fa-check me-2"></i> Copied!`;
+    setTimeout(() => { copyResultBtn.innerHTML = `<i class="fa-solid fa-copy me-2"></i> Copy Content`; }, 2000);
+};
+</script>
+</body>
+</html>
